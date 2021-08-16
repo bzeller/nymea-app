@@ -309,7 +309,7 @@ void AWSClient::logout()
 
 void AWSClient::signup(const QString &username, const QString &password)
 {
-    m_userId = QUuid::createUuid().toString().remove(QRegExp("[{}]"));
+    m_userId = QUuid::createUuid().toString().remove(QRegularExpression("[{}]"));
     m_username = username;
     m_password = password;
 
@@ -729,7 +729,7 @@ QString AWSClient::cognitoIdentityId() const
 void AWSClient::fetchCertificate(const QString &uuid, std::function<void(const QByteArray &, const QByteArray &, const QByteArray &, const QByteArray &, const QString &)> callback)
 {
     QString fixedUuid = uuid;
-    fixedUuid.remove(QRegExp("[{}]"));
+    fixedUuid.remove(QRegularExpression("[{}]"));
     QNetworkRequest request(m_configs.value(m_usedConfig).certificateEndpoint);
     request.setRawHeader("X-api-key", m_configs.value(m_usedConfig).certificateApiKey.toUtf8());
     request.setRawHeader("X-api-vendorId", m_configs.value(m_usedConfig).certificateVendorId.toUtf8());
@@ -1055,13 +1055,13 @@ void AWSClient::fetchDevices()
             }
             d->setOnline(online);
             d->setName(name);
-            actualDevices.append(d->id());
+            actualDevices.append(QUuid(d->id()));
         }
 
         // Clean up the model
         QStringList devicesToRemove;
         for (int i = 0; i < m_devices->rowCount(); i++) {
-            if (!actualDevices.contains(m_devices->get(i)->id())) {
+            if (!actualDevices.contains(QUuid(m_devices->get(i)->id()))) {
                 devicesToRemove.append(m_devices->get(i)->id());
             }
         }

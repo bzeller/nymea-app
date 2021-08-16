@@ -38,13 +38,12 @@
 #include "jsonrpc/jsonrpcclient.h"
 #include "wifisetup/bluetoothdiscovery.h"
 
-class RuleManager;
-class ScriptManager;
-class LogManager;
-class TagsManager;
-class NymeaConfiguration;
-class SystemController;
-class NetworkManager;
+#include "rulemanager.h"
+#include "scriptmanager.h"
+#include "logmanager.h"
+#include "tagsmanager.h"
+#include "configuration/nymeaconfiguration.h"
+#include "system/systemcontroller.h"
 
 class Engine : public QObject
 {
@@ -86,5 +85,7 @@ private slots:
     void onThingManagerFetchingChanged();
 
 };
+
+Q_DECLARE_METATYPE(Engine*)
 
 #endif // ENGINE_H

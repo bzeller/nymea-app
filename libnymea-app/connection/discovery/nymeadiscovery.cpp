@@ -39,8 +39,8 @@
 #include <QBluetoothUuid>
 #include <QUrlQuery>
 #include <QSettings>
-#include <QNetworkConfigurationManager>
-#include <QNetworkSession>
+//#include <QNetworkConfigurationManager>
+//#include <QNetworkSession>
 
 #include "logging.h"
 NYMEA_LOGGING_CATEGORY(dcDiscovery, "Discovery")
@@ -235,11 +235,11 @@ void NymeaDiscovery::syncCloudDevices()
 {
     for (int i = 0; i < m_awsClient->awsDevices()->rowCount(); i++) {
         AWSDevice *d = m_awsClient->awsDevices()->get(i);
-        NymeaHost *host = m_nymeaHosts->find(d->id());
+        NymeaHost *host = m_nymeaHosts->find(QUuid(d->id()));
         bool alreayAdded = host != nullptr;
         if (!alreayAdded) {
             host = new NymeaHost();
-            host->setUuid(d->id());
+            host->setUuid(QUuid(d->id()));
         }
         host->setName(d->name());
         QUrl url;

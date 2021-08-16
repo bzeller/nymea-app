@@ -33,7 +33,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.2
 import Nymea 1.0
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 import "../delegates"
 import "../utils"
 

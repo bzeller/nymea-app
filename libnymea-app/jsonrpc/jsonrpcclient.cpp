@@ -159,7 +159,7 @@ void JsonRpcClient::disconnectFromHost()
     m_connection->disconnectFromHost();
 }
 
-void JsonRpcClient::acceptCertificate(const QString &serverUuid, const QByteArray &pem)
+void JsonRpcClient::acceptCertificate(const QUuid &serverUuid, const QByteArray &pem)
 {
     qDebug() << "Pinning new certificate for" << serverUuid << pem;
     storePem(serverUuid, pem);
@@ -204,7 +204,7 @@ void JsonRpcClient::notificationReceived(const QVariantMap &data)
             m_token = data.value("params").toMap().value("token").toByteArray();
             QSettings settings;
             settings.beginGroup("jsonTokens");
-            settings.setValue(m_serverUuid, m_token);
+            settings.setValue(m_serverUuid.toString(), m_token);
             settings.endGroup();
 
             m_initialSetupRequired = false;
@@ -348,7 +348,7 @@ QString JsonRpcClient::jsonRpcVersion() const
     return m_jsonRpcVersion.toString();
 }
 
-QString JsonRpcClient::serverUuid() const
+QUuid JsonRpcClient::serverUuid() const
 {
     return m_serverUuid;
 }
@@ -441,7 +441,7 @@ void JsonRpcClient::processAuthenticate(int /*commandId*/, const QVariantMap &da
         }
         QSettings settings;
         settings.beginGroup("jsonTokens");
-        settings.setValue(m_serverUuid, m_token);
+        settings.setValue(m_serverUuid.toString(), m_token);
         settings.endGroup();
         emit authenticationRequiredChanged();
 
@@ -527,8 +527,8 @@ void JsonRpcClient::sendRequest(const QVariantMap &request)
 
 bool JsonRpcClient::loadPem(const QUuid &serverUud, QByteArray &pem)
 {
-    QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/sslcerts/");
-    QFile certFile(dir.absoluteFilePath(serverUud.toString().remove(QRegExp("[{}]")) + ".pem"));
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sslcerts/");
+    QFile certFile(dir.absoluteFilePath(serverUud.toString().remove(QRegularExpression("[{}]")) + ".pem"));
     if (!certFile.open(QFile::ReadOnly)) {
         return false;
     }
@@ -539,11 +539,11 @@ bool JsonRpcClient::loadPem(const QUuid &serverUud, QByteArray &pem)
 
 bool JsonRpcClient::storePem(const QUuid &serverUuid, const QByteArray &pem)
 {
-    QDir dir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/sslcerts/");
+    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sslcerts/");
     if (!dir.exists()) {
-        dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/sslcerts/");
+        dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sslcerts/");
     }
-    QFile certFile(dir.absoluteFilePath(serverUuid.toString().remove(QRegExp("[{}]")) + ".pem"));
+    QFile certFile(dir.absoluteFilePath(serverUuid.toString().remove(QRegularExpression("[{}]")) + ".pem"));
     if (!certFile.open(QFile::WriteOnly | QFile::Truncate)) {
         return false;
     }
@@ -647,7 +647,7 @@ void JsonRpcClient::dataReceived(const QByteArray &data)
             m_token.clear();
             QSettings settings;
             settings.beginGroup("jsonTokens");
-            settings.setValue(m_serverUuid, m_token);
+            settings.setValue(m_serverUuid.toString(), m_token);
             settings.endGroup();
             emit authenticationRequiredChanged();
             m_authenticated = false;
@@ -698,7 +698,7 @@ void JsonRpcClient::helloReply(int /*commandId*/, const QVariantMap &params)
     m_pushButtonAuthAvailable = params.value("pushButtonAuthAvailable").toBool();
     emit pushButtonAuthAvailableChanged();
 
-    m_serverUuid = params.value("uuid").toString();
+    m_serverUuid = params.value("uuid").toUuid();
     m_serverVersion = params.value("version").toString();
     m_experiences.clear();
     foreach (const QVariant &experience, params.value("experiences").toList()) {
@@ -751,7 +751,7 @@ void JsonRpcClient::helloReply(int /*commandId*/, const QVariantMap &params)
                 // Reject the connection until the UI explicitly accepts this...
                 m_connection->disconnectFromHost();
 
-                emit verifyConnectionCertificate(m_serverUuid, issuerInfo, certificate.toPem());
+                emit verifyConnectionCertificate(m_serverUuid.toString(), issuerInfo, certificate.toPem());
                 return;
             }
             qCInfo(dcJsonRpc()) << "This connections certificate is trusted.";
@@ -792,7 +792,7 @@ void JsonRpcClient::helloReply(int /*commandId*/, const QVariantMap &params)
         // Reload the token, now that we're certain about the server uuid.
         QSettings settings;
         settings.beginGroup("jsonTokens");
-        m_token = settings.value(m_serverUuid).toByteArray();
+        m_token = settings.value(m_serverUuid.toString()).toByteArray();
         settings.endGroup();
         emit authenticationRequiredChanged();
 

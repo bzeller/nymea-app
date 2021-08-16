@@ -114,7 +114,7 @@ void ZeroconfDiscovery::serviceEntryAdded(const QZeroConfService &entry)
 
     qCDebug(dcZeroConf()) << "Service discovered" << entry->type() << entry->name() << " IP:" << entry->ip().toString() << entry->txt();
 
-    QString uuid;
+    QUuid uuid;
     bool sslEnabled = false;
     QString serverName;
     QString version;
@@ -124,7 +124,7 @@ void ZeroconfDiscovery::serviceEntryAdded(const QZeroConfService &entry)
             sslEnabled = (txtRecord.second == "true");
         }
         if (txtRecord.first == "uuid") {
-            uuid = txtRecord.second;
+            uuid = QUuid(txtRecord.second);
         }
         if (txtRecord.first == "name") {
             serverName = txtRecord.second;
@@ -174,7 +174,7 @@ void ZeroconfDiscovery::serviceEntryRemoved(const QZeroConfService &entry)
         return;
     }
 
-    QString uuid;
+    QUuid uuid;
     bool sslEnabled = false;
     QString serverName;
     QString version;
@@ -184,7 +184,7 @@ void ZeroconfDiscovery::serviceEntryRemoved(const QZeroConfService &entry)
             sslEnabled = (txtRecord.second == "true");
         }
         if (txtRecord.first == "uuid") {
-            uuid = txtRecord.second;
+            uuid = QUuid(txtRecord.second);
         }
         if (txtRecord.first == "name") {
             serverName = txtRecord.second;
