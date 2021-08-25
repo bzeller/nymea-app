@@ -4444,7 +4444,7 @@ In order to have Modbus RTU available as resource in the system, please add a ne
     </message>
     <message>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı:</translation>
     </message>
     <message>
         <source>Encrypted connection:</source>
