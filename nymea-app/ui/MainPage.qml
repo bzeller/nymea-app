@@ -41,8 +41,9 @@ import "components"
 import "delegates"
 import "mainviews"
 
-Page {
+SwipeBackPage {
     id: root
+    swipeEnabled: false
 
     function configureViews() {
         if (Configuration.hasOwnProperty("mainViewsFilter")) {
