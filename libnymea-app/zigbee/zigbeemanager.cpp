@@ -124,6 +124,15 @@ void ZigbeeManager::setPermitJoin(const QUuid &networkUuid, uint duration)
     m_engine->jsonRpcClient()->sendCommand("Zigbee.SetPermitJoin", params, this, "setPermitJoinResponse");
 }
 
+void ZigbeeManager::setPermitJoinRouter(const QUuid &networkUuid, quint16 shortAddress, uint duration)
+{
+    QVariantMap params;
+    params.insert("networkUuid", networkUuid);
+    params.insert("duration", duration);
+    params.insert("shortAddress", shortAddress);
+    m_engine->jsonRpcClient()->sendCommand("Zigbee.SetPermitJoin", params, this, "setPermitJoinResponse");
+}
+
 void ZigbeeManager::factoryResetNetwork(const QUuid &networkUuid)
 {
     QVariantMap params;
@@ -144,6 +153,14 @@ int ZigbeeManager::removeNode(const QUuid &networkUuid, const QString &ieeeAddre
     params.insert("networkUuid", networkUuid);
     params.insert("ieeeAddress", ieeeAddress);
     return m_engine->jsonRpcClient()->sendCommand("Zigbee.RemoveNode", params, this, "removeNodeResponse");
+}
+
+int ZigbeeManager::updateNodeNeighbors(const QUuid &networkUuid, const QString &ieeeAddress)
+{
+    QVariantMap params;
+    params.insert("networkUuid", networkUuid);
+    params.insert("ieeeAddress", ieeeAddress);
+    return m_engine->jsonRpcClient()->sendCommand("Zigbee.UpdateNodeNeighborTable", params, this, "updateNodeNeighborsResponse");
 }
 
 void ZigbeeManager::init()
@@ -238,6 +255,12 @@ void ZigbeeManager::removeNodeResponse(int commandId, const QVariantMap &params)
 {
     qCDebug(dcZigbee()) << "Zigbee remove node response" << commandId << params;
     emit removeNodeReply(commandId, params.value("zigbeeError").toString());
+}
+
+void ZigbeeManager::updateNodeNeighborsResponse(int commandId, const QVariantMap &params)
+{
+    qCDebug(dcZigbee()) << "Zigbee update neighbors response" << commandId << params;
+    emit updateNodeNeighborsReply(commandId, params.value("zigbeeError").toString());
 }
 
 void ZigbeeManager::notificationReceived(const QVariantMap &notification)

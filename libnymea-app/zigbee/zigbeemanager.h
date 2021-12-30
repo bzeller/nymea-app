@@ -89,15 +89,18 @@ public:
     Q_INVOKABLE int addNetwork(const QString &serialPort, uint baudRate, const QString &backend, ZigbeeChannels channels);
     Q_INVOKABLE void removeNetwork(const QUuid &networkUuid);
     Q_INVOKABLE void setPermitJoin(const QUuid &networkUuid, uint duration = 120);
+    Q_INVOKABLE void setPermitJoinRouter(const QUuid &networkUuid, quint16 shortAddress, uint duration = 120);
     Q_INVOKABLE void factoryResetNetwork(const QUuid &networkUuid);
     Q_INVOKABLE void getNodes(const QUuid &networkUuid);
     Q_INVOKABLE int removeNode(const QUuid &networkUuid, const QString &ieeeAddress);
+    Q_INVOKABLE int updateNodeNeighbors(const QUuid &networkUuid, const QString &ieeeAddress);
 
 signals:
     void engineChanged();
     void availableBackendsChanged();
     void addNetworkReply(int commandId, const QString &error, const QUuid &networkUuid);
     void removeNodeReply(int commandId, const QString &error);
+    void updateNodeNeighborsReply(int commandId, const QString &error);
 
 private:
     void init();
@@ -113,6 +116,7 @@ private:
 
     Q_INVOKABLE void getNodesResponse(int commandId, const QVariantMap &params);
     Q_INVOKABLE void removeNodeResponse(int commandId, const QVariantMap &params);
+    Q_INVOKABLE void updateNodeNeighborsResponse(int commandId, const QVariantMap &params);
 
     Q_INVOKABLE void notificationReceived(const QVariantMap &notification);
 

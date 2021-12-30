@@ -324,8 +324,8 @@ SettingsPageBase {
                 size: Style.smallIconSize
                 anchors.verticalCenter: parent.verticalCenter
                 name: node.type === ZigbeeNode.ZigbeeNodeTypeRouter
-                  ? "/ui/images/zigbee-router.svg"
-                  : "/ui/images/zigbee-enddevice.svg"
+                      ? "/ui/images/zigbee-router.svg"
+                      : "/ui/images/zigbee-enddevice.svg"
                 color: communicationIndicatorLedTimer.running ? Style.accentColor : Style.iconColor
                 Component.onCompleted: print("************+ node type", node.type)
             }
@@ -415,17 +415,17 @@ SettingsPageBase {
                 Layout.fillWidth: true
 
                 Button {
-    //                    size: Style.iconSize
+                    // size: Style.iconSize
+                    // imageSource: "/ui/images/delete.svg"
                     visible: node && node.type !== ZigbeeNode.ZigbeeNodeTypeCoordinator
-    //                    imageSource: "/ui/images/delete.svg"
                     text: qsTr("Remove")
-                    Layout.alignment: Qt.AlignLeft
                     onClicked: {
                         var dialog = removeZigbeeNodeDialogComponent.createObject(app, {zigbeeNode: node})
                         dialog.open()
                         nodeInfoDialog.close()
                     }
                 }
+
                 Item {
                     Layout.fillWidth: true
                 }
@@ -436,6 +436,32 @@ SettingsPageBase {
                     Layout.alignment: Qt.AlignRight
                 }
             }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Button {
+                    text: qsTr("Permit join")
+                    visible: node.type === ZigbeeNode.ZigbeeNodeTypeRouter
+                    onClicked: {
+                        zigbeeManager.setPermitJoinRouter(network.networkUuid, node.networkAddress, 120)
+                        nodeInfoDialog.close()
+                    }
+
+                    Layout.alignment: Qt.AlignLeft
+                }
+
+                Button {
+                    text: qsTr("Update neighbors")
+                    onClicked: {
+                        zigbeeManager.updateNodeNeighbors(network.networkUuid, node.ieeeAddress)
+                        nodeInfoDialog.close()
+                    }
+
+                    Layout.alignment: Qt.AlignRight
+                }
+            }
+
         }
     }
 
