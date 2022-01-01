@@ -1,3 +1,10 @@
+nymea-app (1.0.419) bionic; urgency=medium
+
+  [ Michael Zanetti ]
+  * Fixes and improvements in the energy charts
+
+ -- Jenkins <jenkins@nymea.io>  Sat, 01 Jan 2022 20:02:09 +0100
+
 nymea-app (1.0.418) bionic; urgency=medium
 
   [ Michael Zanetti ]
